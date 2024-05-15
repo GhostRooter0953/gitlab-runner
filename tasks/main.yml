@@ -1,0 +1,59 @@
+---
+- name: Download GitLab Runner binary
+  get_url:
+    url: https://gitlab-runner-downloads.s3.amazonaws.com/{{ runner_version }}/binaries/gitlab-runner-linux-amd64
+    dest: /usr/local/bin/gitlab-runner
+    mode: '0755'
+
+- name: Ensure the '/etc/gitlab-runner' directory exists
+  file:
+    path: /etc/gitlab-runner
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Copy toml gitlab-runner template
+  template:
+    src: templates/config.toml.j2
+    dest: /etc/gitlab-runner/config.toml
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Copy systemd gitlab-runner template
+  template:
+    src: templates/gitlab-runner.service.j2
+    dest: /etc/systemd/system/gitlab-runner.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Reload systemd daemon to recognize gitlab-runner service
+  systemd:
+    daemon_reload: yes
+
+- name: Enable and start the gitlab-runner service
+  systemd:
+    name: gitlab-runner.service
+    enabled: yes
+    state: started
+
+- name: Create GitLab Runner user
+  user:
+    name: gitlab-runner
+    comment: 'GitLab Runner'
+    create_home: yes
+    shell: /bin/bash
+
+- name: Start GitLab Runner service
+  service:
+    name: gitlab-runner
+    state: started
+    enabled: yes
+
+- name: Restart gitlab-runner
+  systemd:
+    name: gitlab-runner.service
+    state: restarted
+  when: not ansible_check_mode

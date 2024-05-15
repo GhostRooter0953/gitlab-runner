@@ -1,0 +1,17 @@
+concurrent = {{ runner_connections_current }}
+check_interval = 0
+shutdown_timeout = 0
+
+[session_server]
+  session_timeout = 1800
+
+[[runners]]
+  name = "{{ runner_name }}"
+  url = "https://gitlab.com/"
+  id = {{ runner_id }}
+  token = "{{ runner_token }}"
+  token_obtained_at = 2024-02-18T15:08:42Z
+  token_expires_at = 0001-01-01T00:00:00Z
+  executor = "shell"
+  [runners.cache]
+    MaxUploadedArchiveSize = 0

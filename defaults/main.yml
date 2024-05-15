@@ -1,0 +1,6 @@
+---
+runner_connections_current: "1"
+runner_version: latest
+runner_name: "example"
+runner_token: "YOUR_GITLAB_TOKEN_HERE"
+runner_id: 2222222
